@@ -33,7 +33,7 @@ const renderItem: ListRenderItem<listItf> = ({ item }) => {
     const lastNumber = item.url.split('/').filter((part: any) => !!part).pop();
     if (lastNumber && !isNaN(parseInt(lastNumber))) {
         pokeId = parseInt(lastNumber);
-        console.log(pokeId);
+        // console.log(pokeId);
     }
 
     return <Link href="/detail" asChild>

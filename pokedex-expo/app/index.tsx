@@ -33,7 +33,7 @@ const renderItem: ListRenderItem<listItf> = ({ item }) => {
     const lastNumber = item.url.split('/').filter((part: any) => !!part).pop();
     if (lastNumber && !isNaN(parseInt(lastNumber))) {
         pokeId = parseInt(lastNumber);
-        console.log(pokeId);
+        // console.log(pokeId);
     }
 
     return <Link href="/detail" asChild>
@@ -48,11 +48,12 @@ const renderItem: ListRenderItem<listItf> = ({ item }) => {
     <Box
         style={{
             // aspectRatio: 1, // 1:1 aspect ratio
-            borderWidth: 1,
-            borderColor: 'black',
             justifyContent: 'flex-start',
             alignItems: 'center',
-            backgroundColor: 'white'
+            backgroundColor: 'white',
+            borderWidth: 1,
+            borderColor: 'gray',
+            borderRadius: 4
         }}
     >
         <Box aspectRatio={1} w={'100%'}>
@@ -75,7 +76,7 @@ export default function index() {
     <Box flex={1} padding={4}>
       
       <Box padding={4}>
-      <Input backgroundColor='white' borderColor='black'>
+      <Input backgroundColor='white' borderColor='gray'>
           <InputSlot pl='$3'>
             <InputIcon as={SearchIcon}/>
           </InputSlot>

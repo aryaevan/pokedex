@@ -59,7 +59,7 @@ function RootLayoutNav() {
             title: 'Pokedex', 
             headerTitleAlign:'center',
             headerRight: () => (
-              <Link href="/modal" asChild>
+              <Link href="/favorite" asChild>
                 <Pressable>
                   {({ pressed }) => (
                     <FontAwesome
@@ -75,6 +75,8 @@ function RootLayoutNav() {
             }}/>
         {/* <Stack.Screen name="(tabs)" options={{ headerShown: false }} /> */}
         <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="favorite" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="detail" options={{ presentation: 'modal' }} />
       </Stack>
     </GluestackUIProvider>
   );

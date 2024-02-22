@@ -1,7 +1,8 @@
 import React from 'react'
 import {Box, Input, InputField, InputSlot, InputIcon, Text, SearchIcon, Image} from '@gluestack-ui/themed'
-import { FlatList } from 'react-native';
+import { FlatList, Pressable } from 'react-native';
 import { ListRenderItem } from 'react-native';
+import { Link } from 'expo-router';
 
 
 interface listItf{
@@ -35,7 +36,9 @@ const renderItem: ListRenderItem<listItf> = ({ item }) => {
         console.log(pokeId);
     }
 
-    return <Box
+    return <Link href="/detail" asChild>
+        
+    <Pressable
     style={{
         width: '50%', // Each item takes up 50% of the width
         padding: 4, // Padding on the left, right, and between columns
@@ -62,7 +65,8 @@ const renderItem: ListRenderItem<listItf> = ({ item }) => {
         <Text>{item.name}</Text>
     </Box>
     
-</Box>
+</Pressable>
+</Link>
 }
 
 export default function index() {

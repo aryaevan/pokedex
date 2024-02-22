@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import {Box, Input, InputField, InputSlot, InputIcon, Text, Icon, Image, FavouriteIcon} from '@gluestack-ui/themed'
+import {Box, Input, InputField, InputSlot, InputIcon, Text, Icon, Image, FavouriteIcon, ScrollView} from '@gluestack-ui/themed'
 import { FlatList, Pressable } from 'react-native';
 import { ListRenderItem } from 'react-native';
 import { Link } from 'expo-router';
@@ -9,16 +9,23 @@ interface listItf{
     name: string;
     url: string;
 }
+
+interface PokeSprites {
+    sprites: {
+      [key: string]: string | null;
+    };
+  }
+
 const DATA = {
     "name" : "charmander",
     "sprites": {
-        "back_default": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/4.png",
-        "back_female": null,
-        "back_shiny": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/shiny/4.png",
-        "back_shiny_female": null,
         "front_default": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/4.png",
-        "front_female": null,
+        "back_default": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/4.png",
         "front_shiny": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/4.png",
+        "back_shiny": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/shiny/4.png",
+        "back_female": null,
+        "back_shiny_female": null,
+        "front_female": null,
         "front_shiny_female": null,
         "other": {
             "dream_world": {
@@ -75,27 +82,60 @@ function capitalize(str: string){
 
 export default function DetailScreen() {
     const [pokeData, setPokeData] = useState(DATA);
+
+    const abilityNames = DATA.abilities.map(ability => ability.ability.name);
+
+    const sprites: any = pokeData?.sprites;
+    const imageElements: JSX.Element[] = [];
+    for (const key in sprites) {
+      if (sprites.hasOwnProperty(key) && key !== 'other' && sprites[key] !== null) {
+        const imageUrl = sprites[key];
+        imageElements.push(
+          <Box w="50%" pb={4} key={key} alignItems='center'>
+            <Box minWidth="80%" alignItems='center' borderColor='black' borderWidth={1} borderRadius={4}>
+                <Image
+                    source={{ uri: imageUrl }}
+                    alt={'image'}
+                    // style={styles.pokemonImage}
+                />
+            </Box>
+          </Box>
+        );
+      }
+    }
+
+    
   return (
     <Box flex={1}>
-      <Box aspectRatio={1} w={'100%'} bgColor='green'>
-            {/* <Image 
-                size='full'
-                source={{uri: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/4.png`}}
-                alt={'image'}
-            /> */}
-      </Box>
-      <Box paddingHorizontal={4} >
-        <Box p={4} flexDirection='row' justifyContent='space-between' alignItems='center'>
-            <Text size='2xl'>{capitalize(pokeData.name)}</Text>
-            <Icon as={FavouriteIcon} size='lg' />
+        <ScrollView>
+        <Box aspectRatio={1} w={'100%'}>
+                <Image 
+                    size='full'
+                    source={{uri: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/4.png`}}
+                    alt={'image'}
+                />
         </Box>
-        <Box>
-            <Text>Sprite Gallery</Text>
+        <Box paddingHorizontal={8} bgColor='white' >
+            <Box flexDirection='row' justifyContent='space-between' alignItems='center'>
+                <Text size='2xl' color='black' fontWeight='700'>{capitalize(pokeData.name)}</Text>
+                <Box minWidth={50} height={50} justifyContent='center' alignItems='center'>
+                    <Icon as={FavouriteIcon} size='lg' />
+                </Box>
+            </Box>
+            <Box>
+                <Text size='xl' color='black' fontWeight='500' pb={4}>Sprite Gallery</Text>
+                <Box w='100%' flexDirection='row' flexWrap='wrap'>
+                    {imageElements}
+                </Box>
+            </Box>
+            <Box>
+                <Text size='xl' color='black' fontWeight='500' pb={4}>Abilities</Text>
+                    {abilityNames.map((ability, index) => (
+                    <Text pl={4} key={index}>{ability}</Text>
+                ))}
+            </Box>
         </Box>
-        <Box>
-            <Text>Abilities</Text>
-        </Box>
-      </Box>
+        </ScrollView>
     </Box>
   )
 }

@@ -58,7 +58,8 @@ const renderItem: ListRenderItem<listItf> = ({ item }) => {
         <Box aspectRatio={1} w={'100%'}>
             <Image 
                 size='full'
-                source={{uri: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokeId}.png`}}
+                // source={{uri: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokeId}.png`}}
+                source={{uri: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokeId}.png`}}
                 alt={item.name}
             />
         </Box>

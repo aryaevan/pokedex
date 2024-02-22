@@ -75,8 +75,8 @@ function RootLayoutNav() {
             }}/>
         {/* <Stack.Screen name="(tabs)" options={{ headerShown: false }} /> */}
         <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
-        <Stack.Screen name="favorite" options={{ presentation: 'modal' }} />
-        <Stack.Screen name="detail" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="favorite" options={{title:'Favorite Pokemon', presentation: 'modal' }} />
+        <Stack.Screen name="detail" options={{title:'Pokemon Detail', presentation: 'modal' }} />
       </Stack>
     </GluestackUIProvider>
   );

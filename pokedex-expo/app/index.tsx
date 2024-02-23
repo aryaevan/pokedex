@@ -1,34 +1,15 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import {Box, Input, InputField, InputSlot, InputIcon, Text, SearchIcon, Image} from '@gluestack-ui/themed'
-import { FlatList, Pressable } from 'react-native';
+import { ActivityIndicator, FlatList, Pressable } from 'react-native';
 import { ListRenderItem } from 'react-native';
 import { Link } from 'expo-router';
 
-
-interface listItf{
-    name: string;
-    url: string;
+interface Pokemon {
+  name: string;
+  url: string;
 }
-const DATA = [
-    {
-      "name": "charmander",
-      "url": "https://pokeapi.co/api/v2/pokemon/4/"
-    },
-    {
-      "name": "charmeleon",
-      "url": "https://pokeapi.co/api/v2/pokemon/5/"
-    },
-    {
-      "name": "charizard",
-      "url": "https://pokeapi.co/api/v2/pokemon/6/"
-    },
-    {
-      "name": "squirtle",
-      "url": "https://pokeapi.co/api/v2/pokemon/7/"
-    }
-  ];
 
-const renderItem: ListRenderItem<listItf> = ({ item }) => {
+const renderItem: ListRenderItem<Pokemon> = ({ item }) => {
     let pokeId=0;
     const lastNumber = item.url.split('/').filter((part: any) => !!part).pop();
     if (lastNumber && !isNaN(parseInt(lastNumber))) {
@@ -36,8 +17,12 @@ const renderItem: ListRenderItem<listItf> = ({ item }) => {
         // console.log(pokeId);
     }
 
-    return <Link href="/detail" asChild>
-        
+    // return <Link href="/detail" asChild>
+    return <Link
+        href={{pathname: "/detail/[pokeId]", params: { pokeId: pokeId }}}
+        asChild
+        >
+
     <Pressable
     style={{
         width: '50%', // Each item takes up 50% of the width
@@ -72,6 +57,27 @@ const renderItem: ListRenderItem<listItf> = ({ item }) => {
 }
 
 export default function index() {
+
+  const [pokeData, setPokeData] = useState<Pokemon[]>([]);
+  const [offset, setOffset] = useState(0);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+        setLoading(true);
+        try {
+            const response = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=20&offset=${offset}`);
+            const data = await response.json();
+            setPokeData((prevData) => [...prevData, ...data.results]);
+            setOffset((prevOffset) => prevOffset + 20);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+        setLoading(false);
+    };
+
+    fetchData();
+}, [offset]);
   return (
     <Box flex={1} padding={4}>
       
@@ -87,11 +93,19 @@ export default function index() {
       </Box>
 
       <FlatList
-        data={DATA}
+        data={pokeData}
         renderItem={renderItem}
         keyExtractor={(item:any) => item.url}
-        numColumns={2}
-      />
+        numColumns={2}onEndReachedThreshold={0.1}
+        onEndReached={() => {
+            if (!loading) {
+                // Load more data when reaching the end
+                // Assuming a limit of 20 results per page
+                setOffset(offset + 20);
+            }
+        }}
+        ListFooterComponent={loading ? <ActivityIndicator /> : null}
+    />
     </Box>
   )
 }

@@ -61,6 +61,15 @@ export default function index() {
   const [pokeData, setPokeData] = useState<Pokemon[]>([]);
   const [offset, setOffset] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+  };
+
+  const filteredData = pokeData.filter((pokemon) =>
+      pokemon.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   useEffect(() => {
     const fetchData = async () => {
@@ -88,12 +97,14 @@ export default function index() {
           </InputSlot>
           <InputField
             placeholder="Search..."
+            value={searchQuery}
+            onChangeText={handleSearch}
           />
       </Input>
       </Box>
 
       <FlatList
-        data={pokeData}
+        data={filteredData}
         renderItem={renderItem}
         keyExtractor={(item:any) => item.url}
         numColumns={2}onEndReachedThreshold={0.1}

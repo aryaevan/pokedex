@@ -7,66 +7,54 @@
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const setFav = async (value:string) => {
+
+export const GetFavorite = async (): Promise<Pokemon[] | null> => {
     try {
-      const jsonValue = JSON.stringify(value);
-      await AsyncStorage.setItem('favlist', jsonValue);
-      return true;
-    } catch (e) {
-      // handle error
-      return false;
+      const data = await AsyncStorage.getItem('pokemonData');
+      if (data !== null) {
+        return JSON.parse(data);
+      }
+      return null;
+    } catch (error) {
+      console.error('Error fetching data from AsyncStorage:', error);
+      return null;
     }
   };
 
-const getString = async (key?:string) => {
-    try {
-        const jsonValue = await AsyncStorage.getItem(key ?? 'favlist');
-        console.log("jsonValue", jsonValue)
-        return jsonValue != null ? JSON.parse(jsonValue) : [];
-    } catch (e){
-        // handle error
-        return false;
-    }
-}
-
-type FavData = {
+interface Pokemon {
     name: string;
     url: string;
+  }
+export const AddFavorite = async (newPokemon: Pokemon): Promise<void> => {
+    try {
+      // Fetch existing data
+      const existingData = await GetFavorite();
+  
+      // If data exists, modify it and save back to AsyncStorage
+      if (existingData !== null) {
+        const modifiedData = [...existingData, newPokemon];
+        await AsyncStorage.setItem('pokemonData', JSON.stringify(modifiedData));
+        console.log('New data saved to AsyncStorage:', modifiedData);
+      } else {
+        // If no existing data, save new data as the only item
+        const newData = [newPokemon];
+        await AsyncStorage.setItem('pokemonData', JSON.stringify(newData));
+        console.log('New data saved to AsyncStorage:', newData);
+      }
+    } catch (error) {
+      console.error('Error saving data to AsyncStorage:', error);
+    }
   };
 
-// export async function AddFavorite({ id, data }: { id: string | string[], data?: string }){
-export async function AddFavorite(favData:string){
-    // console.log("ADD Favorite Function", favData);
-
-    // const favDataJson = JSON.parse(favData);
-
-    // const existingList:string[] = await getString();
-    // console.log("existing favorite list",existingList);
-    // console.log("insert data", favDataJson);
-    
-    // existingList.push(favDataJson);
-    // console.log("updated list", existingList);
-    // const updatedList = JSON.stringify(existingList);
-    // console.log("stringed update list:",updatedList);
-    // setFav(updatedList);
-
-    console.log("ADD Favorite Function", favData);
-    
-    const favDataJson: FavData = JSON.parse(favData);
-    
-    let existingList: FavData[] = [];
-    existingList = await getString();
-    console.log("existing favorite list", existingList);
-    
-    existingList.push(favDataJson);
-    console.log("updated list", existingList);
-    
-    const updatedList = JSON.stringify(existingList);
-    console.log("stringed update list:", updatedList);
-    
-    await setFav(updatedList);
-
-
-
+export const ClearFavorite = async ()=>{
+    try{
+        await AsyncStorage.removeItem('pokemonData');
+    } catch(e)
+    {
+        console.error('Error clear favorite data in AsyncStorage',e);
+        return false;
+    }finally{
+        return true;
+    }
 
 }

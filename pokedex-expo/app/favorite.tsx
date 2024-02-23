@@ -1,8 +1,10 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import {Box, Input, InputField, InputSlot, InputIcon, Text, SearchIcon, Image} from '@gluestack-ui/themed'
 import { FlatList, Pressable } from 'react-native';
 import { ListRenderItem } from 'react-native';
 import { Link } from 'expo-router';
+import { Pokemon } from '@/pokeInterface/Interface';
+import { GetFavorite } from '@/pokeComponent/Favorite';
 
 
 interface listItf{
@@ -36,7 +38,7 @@ const renderItem: ListRenderItem<listItf> = ({ item }) => {
         // console.log(pokeId);
     }
 
-    return <Link href="/detail" asChild>
+    return <Link href={`/detail/${pokeId}`} asChild>
         
     <Pressable
     style={{
@@ -70,22 +72,27 @@ const renderItem: ListRenderItem<listItf> = ({ item }) => {
 }
 
 export default function FavoriteScreen() {
+  const [favData, setFavData] = useState<Pokemon[]>([]);
+
+  async function fetch(){
+    try{
+      const data = await GetFavorite();
+      if(data){
+        setFavData(data)
+      }
+    }catch(e){
+      console.error(e);
+    }
+  }
+
+  useEffect(()=>{
+    fetch();
+  },[])
   return (
     <Box flex={1} padding={4}>
-      
-      {/* <Box padding={4}>
-      <Input backgroundColor='white' borderColor='black'>
-          <InputSlot pl='$3'>
-            <InputIcon as={SearchIcon}/>
-          </InputSlot>
-          <InputField
-            placeholder="Search..."
-          />
-      </Input>
-      </Box> */}
 
       <FlatList
-        data={DATA}
+        data={favData}
         renderItem={renderItem}
         keyExtractor={(item:any) => item.url}
         numColumns={2}

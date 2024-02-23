@@ -9,6 +9,7 @@ import { useColorScheme } from '@/components/useColorScheme';
 import { GluestackUIProvider } from '@gluestack-ui/themed';
 import { config } from "@gluestack-ui/config";
 import { Pressable } from 'react-native';
+import { ClearFavorite } from '@/pokeComponent/Favorite';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -75,8 +76,21 @@ function RootLayoutNav() {
             }}/>
         {/* <Stack.Screen name="(tabs)" options={{ headerShown: false }} /> */}
         <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
-        <Stack.Screen name="favorite" options={{title:'Favorite Pokemon', presentation: 'modal' }} />
-        <Stack.Screen name="detail" options={{title:'Pokemon Detail', presentation: 'modal' }} />
+        <Stack.Screen name="favorite" options={{title:'Favorite Pokemon', presentation: 'modal',
+            headerRight: () => (
+                <Pressable style={{height:50, paddingHorizontal:10, justifyContent:'center'}} onPress={ClearFavorite}>
+                  {({ pressed }) => (
+                    <FontAwesome
+                      name="trash-o"
+                      size={23}
+                      color={'black'}
+                      style={{ opacity: pressed ? 0.5 : 1 }}
+                    />
+                  )}
+                </Pressable>
+              )}} />
+  
+        <Stack.Screen name="detail" options={{ title:'Pokemon Detail', presentation: 'modal' }} />
       </Stack>
     </GluestackUIProvider>
   );

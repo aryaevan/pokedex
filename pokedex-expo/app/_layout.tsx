@@ -60,13 +60,13 @@ function RootLayoutNav() {
             headerTitleAlign:'center',
             headerRight: () => (
               <Link href="/favorite" asChild>
-                <Pressable>
+                <Pressable style={{height:50, paddingHorizontal:10, justifyContent:'center'}}>
                   {({ pressed }) => (
                     <FontAwesome
                       name="heart-o"
-                      size={25}
+                      size={23}
                       color={'black'}
-                      style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
+                      style={{ opacity: pressed ? 0.5 : 1 }}
                     />
                   )}
                 </Pressable>

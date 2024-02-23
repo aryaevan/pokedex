@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {Box, Input, InputField, InputSlot, InputIcon, Text, Icon, Image, FavouriteIcon, ScrollView} from '@gluestack-ui/themed'
 import { FlatList, Pressable } from 'react-native';
 import { ListRenderItem } from 'react-native';
-import { Link } from 'expo-router';
+import { useLocalSearchParams, useGlobalSearchParams, Link } from 'expo-router';
+import { AddFavorite } from '@/pokeComponent/Favorite';
 
 
 interface listItf{
@@ -17,6 +18,7 @@ interface PokeSprites {
   }
 
 const DATA = {
+    "id" : "4",
     "name" : "charmander",
     "sprites": {
         "front_default": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/4.png",
@@ -81,15 +83,43 @@ function capitalize(str: string){
 }
 
 export default function DetailScreen() {
+    const glob = useGlobalSearchParams();
+    const local = useLocalSearchParams();
+
+    console.log("Local:", local, "Global:", glob);
+    const pokemonId = local.pokeId ?? 1;
     const [pokeData, setPokeData] = useState(DATA);
 
-    const abilityNames = DATA.abilities.map(ability => ability.ability.name);
+    // {
+    //     "name": "squirtle",
+    //     "url": "https://pokeapi.co/api/v2/pokemon/7/"
+    // }
+
+    const favData = {"name": pokeData.name, "url": `https://pokeapi.co/api/v2/pokemon/${pokeData.id}/`};
+    console.log("favData", favData);
+    const favDataString = JSON.stringify(favData);
+    console.log("favDataString", favDataString);
+
+    async function fetchData() {
+        try {
+          const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonId}`);
+          const json = await response.json();
+        //   console.log("fetch detail", json);
+          setPokeData(json);
+        } catch (e) {
+            console.error("fetch error", e);
+        }
+    }
+
+    const abilityNames = pokeData.abilities.map(ability => ability.ability.name);
 
     const sprites: any = pokeData?.sprites;
+    // console.log(sprites);
     const imageElements: JSX.Element[] = [];
     for (const key in sprites) {
-      if (sprites.hasOwnProperty(key) && key !== 'other' && sprites[key] !== null) {
+      if (sprites.hasOwnProperty(key) && key !== 'other' && key !== 'versions' && sprites[key] !== null) {
         const imageUrl = sprites[key];
+        // console.log(imageUrl);
         imageElements.push(
           <Box w="50%" pb={4} key={key} alignItems='center'>
             <Box minWidth="80%" alignItems='center' borderColor='black' borderWidth={1} borderRadius={4}>
@@ -104,23 +134,31 @@ export default function DetailScreen() {
       }
     }
 
-    
+    useEffect(()=>{
+        fetchData();
+    },[])
+
   return (
     <Box flex={1}>
         <ScrollView>
         <Box aspectRatio={1} w={'100%'}>
                 <Image 
                     size='full'
-                    source={{uri: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/4.png`}}
+                    source={{uri: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemonId}.png`}}
+                    // source={{uri: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png"}}
                     alt={'image'}
                 />
         </Box>
-        <Box paddingHorizontal={8} bgColor='white' >
+        <Box paddingHorizontal={8} pb={30} bgColor='white' >
             <Box flexDirection='row' justifyContent='space-between' alignItems='center'>
                 <Text size='2xl' color='black' fontWeight='700'>{capitalize(pokeData.name)}</Text>
-                <Box minWidth={50} height={50} justifyContent='center' alignItems='center'>
-                    <Icon as={FavouriteIcon} size='lg' />
-                </Box>
+                <Pressable onPress={()=>{AddFavorite(favDataString)}}>
+                {({ pressed }) => (
+                    <Box minWidth={50} height={50} justifyContent='center' alignItems='center' opacity={pressed? 0.5 : 1}>
+                        <Icon as={FavouriteIcon} size='lg'/>
+                    </Box>
+                )}
+                </Pressable>
             </Box>
             <Box>
                 <Text size='xl' color='black' fontWeight='500' pb={4}>Sprite Gallery</Text>

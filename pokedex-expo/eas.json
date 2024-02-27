@@ -1,21 +1,52 @@
 {
-  "cli": {
-    "version": ">= 7.3.0"
-  },
   "build": {
+    "base": {
+      "node": "21.0.0",
+      "env": {
+        "EXAMPLE_ENV": "example value"
+      },
+      "android": {
+        "image": "default",
+        "env": {
+          "PLATFORM": "android"
+        }
+      },
+      "ios": {
+        "image": "latest",
+        "env": {
+          "PLATFORM": "ios"
+        }
+      }
+    },
     "development": {
+      "extends": "base",
       "developmentClient": true,
-      "distribution": "internal"
+      "env": {
+        "ENVIRONMENT": "development"
+      },
+      "android": {
+        "distribution": "internal",
+        "withoutCredentials": true
+      },
+      "ios": {
+        "simulator": true
+      }
     },
     "preview": {
+      "extends": "base",
+      "env": {
+        "ENVIRONMENT": "staging"
+      },
       "distribution": "internal",
       "android": {
         "buildType": "apk"
       }
     },
-    "production": {}
-  },
-  "submit": {
-    "production": {}
+    "production": {
+      "extends": "base",
+      "env": {
+        "ENVIRONMENT": "production"
+      }
+    }
   }
 }

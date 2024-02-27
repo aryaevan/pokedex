@@ -22,7 +22,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.aryaevan.pokedexexpo"
     },
     "web": {
       "bundler": "metro",
@@ -43,6 +44,12 @@
       "eas": {
         "projectId": "38d0eecd-79b1-494b-a6ab-a877a0bab425"
       }
-    }
+    },
+    "sdkVersion": "50.0.0",
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ]
   }
 }
